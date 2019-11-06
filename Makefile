@@ -5,7 +5,8 @@ BUILD := build
 COMPILE = @echo CXX $@ && $(CXX) $(CXXFLAGS) $? -o $@ $(CPPFLAGS)
 
 DEPENDENCIES = \
-	submodule/rapidjson/readme.md
+	submodule/rapidjson/readme.md \
+	submodule/gtest/build/lib/libgtest.a
 
 main: main.cpp $(DEPENDENCIES)
 	@mkdir -p $(BUILD)
@@ -15,6 +16,9 @@ clean:
 	@rm -rf $(BUILD)
 
 submodule/rapidjson/readme.md:
-	@echo rapidjson submodule does not seem to exists, did you use --recursive in git clone? && exit 1
+	@echo Cannot find rapidjson submodule, did you use --recursive in git clone? && exit 1
 
+submodule/gtest/build/lib/libgtest.a:
+	@echo Attempting to build gtest ...
+	cd submodule/gtest; mkdir -p build; cd build; cmake ..; make
 
