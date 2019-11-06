@@ -1,0 +1,30 @@
+[{
+				"order_id": "1",
+				"order_type": "add_slot",
+				"stylist_id": 1234, 
+				"slot_begin": "2019-09-01T10:00:00Z",
+				"slot_length_min":60
+	},
+	{
+				"order_id": "2",
+				"order_type": "remove_slot",
+				"stylist_id": 1234, 
+				"slot_begin": "2019-09-01T10:00:00Z",
+				"slot_length_min":30
+	},
+	{
+				"order_id": "3",
+				"order_type": "book_appointment",
+				"stylist_id": 1234, 
+				"client_id": 100024,
+				"slot_begin": "2019-09-01T10:30:00Z",
+				"slot_length_min":30
+	},
+	{
+				"order_id": "4",
+				"order_type": "cancel_appointment",
+				"stylist_id": 1234, 
+				"slot_begin": "2019-09-01T10:30:00Z",
+				"slot_length_min":60
+	}
+]
