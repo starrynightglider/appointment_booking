@@ -7,9 +7,9 @@
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/writer.h"
 
-using namespace app;
-
 int main() {
+  using namespace app::Order;
+
   auto orders_in = parseOrders(R"(orders.json)");
   std::cout << *orders_in << std::endl;
   return 0;

@@ -5,7 +5,7 @@
 #include <utility>
 #include <vector>
 #include "util.hpp"
-namespace app {
+namespace app::Order {
 using namespace std;
 class Order {
  public:
@@ -17,12 +17,12 @@ class Order {
     UnknownType
   };
   Order(string const &order_id, string const &order_type, uint stylist_id,
-        uint client_id, string const &slot_begin, string const &slot_end)
+        uint client_id, string const &slot_begin, uint len)
       : order_id_(order_id),
         order_type_(ConvertType(order_type)),
         stylist_id_(stylist_id),
         client_id_(client_id),
-        slot_(make_pair(slot_begin, slot_end)) {}
+        slot_(make_pair(slot_begin, len)) {}
 
   friend ostream &operator<<(ostream &strm, Order const &order) {
     strm << "order id = " << order.order_id_
@@ -44,8 +44,8 @@ class Order {
   Type order_type_;
   uint stylist_id_;
   uint client_id_ = 0;
-  pair<string, string> slot_;  // pair:{begin, end}
-};                             // namespace app
+  pair<string, int> slot_;  // pair:{begin, len}
+};
 
 shared_ptr<vector<Order>> parseOrders(string filename);
-}  // namespace app
+}  // namespace app::Order
