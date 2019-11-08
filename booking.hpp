@@ -21,7 +21,7 @@ class Booking {
   mutex mutex_;
   unordered_set<string> processed_orders_;
   // map{ epoch --> map {stylist_id, client_id}}
-  unordered_map<time_t, unordered_map<string, optional<uint>>> book_;
+  unordered_map<time_t, unordered_map<uint, optional<uint>>> book_;
 };
 
 }  // namespace app::booking
