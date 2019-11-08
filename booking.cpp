@@ -2,20 +2,31 @@
 
 namespace app::booking {
 
-bool Booking::processOrder(Order const& order) {
+shared_ptr<vector<Booking::Result>> Booking::processOrders(
+    shared_ptr<vector<Order>> orders) {
+  auto rets = make_shared<vector<Booking::Result>>();
+  for (auto const& order : *orders) {
+    rets->push_back(processOrder(order));
+  }
+  return rets;
+}
+
+Booking::Result Booking::processOrder(Order const& order) {
   unique_lock<mutex> lock;
   // assuming different order has different order_id
-  if (processed_orders_.count(order.getOrderId())) {
-    return false;
+  auto order_id = order.getOrderId();
+  if (processed_orders_.count(order_id)) {
+    return {order_id, false};
   }
-  bool ret = false;
+  processed_orders_.insert(order_id);
+  auto ret = false;
   auto stylist_id = order.getStylistId();
   auto len = order.getSlotLen();
   auto epoch = order.getEpochInThirtyMins();
   switch (auto type = order.getOrderType(); type) {
     case Order::AddSlot: {
       // check if any slot exist and booked
-      bool ok = true;
+      auto ok = true;
       for (auto i = 0; i < len; ++i) {
         auto cur_epoch = epoch + i;
         if (book_[cur_epoch].count(stylist_id) != 0 &&
@@ -30,19 +41,37 @@ bool Booking::processOrder(Order const& order) {
           auto cur_epoch = epoch + i;
           book_[cur_epoch][stylist_id] = nullopt;
         }
-        cout << "order id " << order.getOrderId() << " processed successfully!"
-             << endl;
         ret = true;
       }
 
       break;
     }
     case Order::RemoveSlot: {
+      // Check if slots exist and unbooked
+      auto ok = true;
+      for (auto i = 0; i < len; ++i) {
+        auto cur_epoch = epoch + i;
+        if (book_[cur_epoch].count(stylist_id) == 0) {  // slot not exist
+          ok = false;
+          break;
+        } else if (book_[cur_epoch][stylist_id] !=
+                   nullopt) {  // slot already booked by someone
+          ok = false;
+          break;
+        }
+      }
+      if (ok) {
+        for (auto i = 0; i < len; ++i) {
+          auto cur_epoch = epoch + i;
+          book_[cur_epoch].erase(stylist_id);
+        }
+        ret = true;
+      }
       break;
     }
     case Order::BookAppointment: {
       // check if there are slot exist and unbooked
-      bool ok = true;
+      auto ok = true;
       for (auto i = 0; i < len; ++i) {
         auto cur_epoch = epoch + i;
         if (book_.count(cur_epoch) == 0) {  // no such epoch
@@ -65,13 +94,37 @@ bool Booking::processOrder(Order const& order) {
           book_[cur_epoch][stylist_id] = order.getClientId();
         }
         ret = true;
-        cout << "order id " << order.getOrderId() << " processed successfully!"
-             << endl;
       }
 
       break;
     }
     case Order::CancelAppointment: {
+      // check if appointments exist
+      auto ok = true;
+      for (auto i = 0; i < len; ++i) {
+        auto cur_epoch = epoch + i;
+        if (book_.count(cur_epoch) == 0) {
+          ok = false;
+          break;
+        } else {
+          if (book_[cur_epoch].count(stylist_id) == 0) {
+            ok = false;
+            break;
+          } else if (book_[cur_epoch][stylist_id] !=
+                     order.getClientId()) {  // not your appointment, cannot
+                                             // cancel
+            ok = false;
+            break;
+          }
+        }
+      }
+      if (ok) {
+        for (auto i = 0; i < len; ++i) {
+          auto cur_epoch = epoch + i;
+          book_[cur_epoch][stylist_id] = nullopt;
+        }
+        ret = true;
+      }
       break;
     }
     case Order::UnknownType: {
@@ -79,7 +132,7 @@ bool Booking::processOrder(Order const& order) {
       break;
     }
   }
-  return ret;
+  return {order_id, ret};
 }
 
 }  // namespace app::booking

@@ -14,8 +14,9 @@ using namespace std;
 using order::Order;
 class Booking {
  public:
-  shared_ptr<vector<bool>> processOrders(shared_ptr<vector<Order>> orders);
-  bool processOrder(Order const& order);
+  using Result = pair<string, bool>;
+  shared_ptr<vector<Result>> processOrders(shared_ptr<vector<Order>> orders);
+  Result processOrder(Order const& order);
 
  private:
   mutex mutex_;

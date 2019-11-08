@@ -14,9 +14,7 @@ int main() {
 
   auto orders_in = parseOrders(R"(orders.json)");
   Booking book;
-  for (auto order : *orders_in) {
-    std::cout << order << std::endl;
-    book.processOrder(order);
-  }
+  auto res = book.processOrders(orders_in);
+  std::cout << *res << std::endl;
   return 0;
 }

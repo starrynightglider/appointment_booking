@@ -14,13 +14,12 @@ HEADERS := \
 	util.hpp\
 	booking.hpp
 OBJFILES := \
-	$(OBJ)/main.o \
 	$(OBJ)/order.o \
 	$(OBJ)/booking.o 
 
-main:  $(DEPENDENCIES) $(HEADERS) $(OBJFILES) 
+main:  $(DEPENDENCIES) $(HEADERS) $(OBJFILES) $(OBJ)/main.o
 	@mkdir -p $(BUILD)
-	$(CXX) -o $(BUILD)/$@ $(OBJFILES) $(CXXFLAGS) $(CPPFLAGS) $(LIBS) $(LDFLAGS)
+	$(CXX) -o $(BUILD)/$@ $(OBJ)/main.o $(OBJFILES) $(CXXFLAGS) $(CPPFLAGS) $(LIBS) $(LDFLAGS)
 
 $(OBJ)/main.o: main.cpp $(HEADERS)
 	@mkdir -p $(OBJ)
@@ -34,7 +33,7 @@ $(OBJ)/booking.o: booking.cpp $(HEADERS)
 
 test: tests/parse_json.cpp $(DEPENDENCIES) $(HEADERS)
 	@mkdir -p $(TEST_BUILD)
-	$(CXX) $< -o $(TEST_BUILD)/$@.out $(CXXFLAGS) $(CPPFLAGS) $(LIBS) $(LDFLAGS)
+	$(CXX) $< -o $(TEST_BUILD)/$@.out $(OBJFILES) $(CXXFLAGS) $(CPPFLAGS) $(LIBS) $(LDFLAGS)
 
 run_test: test main
 	$(TEST_BUILD)/test.out
