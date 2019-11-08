@@ -11,10 +11,12 @@ DEPENDENCIES = \
 	submodule/gtest/build/lib/libgtest.a
 HEADERS := \
 	order.hpp\
-	util.hpp
+	util.hpp\
+	booking.hpp
 OBJFILES := \
 	$(OBJ)/main.o \
-	$(OBJ)/order.o
+	$(OBJ)/order.o \
+	$(OBJ)/booking.o 
 
 main:  $(DEPENDENCIES) $(HEADERS) $(OBJFILES) 
 	@mkdir -p $(BUILD)
@@ -25,6 +27,9 @@ $(OBJ)/main.o: main.cpp $(HEADERS)
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(CPPFLAGS)
 
 $(OBJ)/order.o: order.cpp $(HEADERS)
+	$(CXX) -o $@ -c $< $(CXXFLAGS) $(CPPFLAGS)
+
+$(OBJ)/booking.o: booking.cpp $(HEADERS)
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(CPPFLAGS)
 
 test: tests/parse_json.cpp $(DEPENDENCIES) $(HEADERS)

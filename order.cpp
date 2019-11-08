@@ -1,12 +1,13 @@
 #include "order.hpp"
-#include <cstdio>
 #include <fstream>
+#include <sstream>
 #include "rapidjson/document.h"
 #include "rapidjson/istreamwrapper.h"
 #include "rapidjson/ostreamwrapper.h"
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/writer.h"
-namespace app::Order {
+
+namespace app::order {
 using namespace rapidjson;
 Order::Type Order::ConvertType(string type) {
   if (type == "add_slot") {
@@ -58,37 +59,35 @@ shared_ptr<vector<Order>> parseOrders(string filename) {
     string slot_begin = od["slot_begin"].GetString();
     auto slot_len = od["slot_length_min"].GetUint();
     // parse ISO time format and convert to bucket
-    uint y, M, d, h, m;
-    float s;
-    sscanf(slot_begin.c_str(), "%d-%d-%dT%d:%d:%fZ", &y, &M, &d, &h, &m, &s);
-
-    // Sanity check
-    if (h >= 24) {
-      cout << "Hour is ill formated: " << h << ", skip the order " << id
-           << endl;
+    std::tm t = {};
+    std::istringstream ss(slot_begin);
+    time_t epoch_in_thirty_mins = 0;
+    if (ss >> std::get_time(&t, "%Y-%m-%dT%H:%M:%S")) {
+      // clear seconds
+      t.tm_sec = 0;
+      // simple sanity check
+      if (t.tm_min % 30 != 0) {
+        cout << "Minute should be in 30 mins unit (" << t.tm_min
+             << "), skip the order " << id << endl;
+        continue;
+      }
+      epoch_in_thirty_mins = std::mktime(&t) / 60 / 30;
+    } else {
+      std::cout << "Time parse failed: " << slot_begin << " , skip the order "
+                << id << endl;
       continue;
     }
-
-    if (m >= 60) {
-      cout << "Minute is ill formated: " << m << ", skip the order " << id
-           << endl;
+    if (slot_len < 30) {
+      cout << "Slot length is less then 30 mins (" << slot_len
+           << "), skip the order " << id << endl;
       continue;
     }
-
-    if (m % 30 != 0) {
-      cout << "Minute should be in 30 mins interval: " << m << " round to "
-           << m / 30 * 30 << endl;
-    }
-    m /= 30;
-    uint bucket = h * 2 + m;
-    string date = to_string(y) + "-" + to_string(M) + "-" + to_string(d) + "-" +
-                  to_string(bucket);
-
     slot_len /= 30;  // unit in 30 mins
 
-    Order new_order(id, type, stylist_id, client_id, date, slot_len);
+    Order new_order(id, type, stylist_id, client_id, epoch_in_thirty_mins,
+                    slot_len);
     all_orders->emplace_back(new_order);
   }
   return all_orders;
 }
-}  // namespace app::Order
+}  // namespace app::order
