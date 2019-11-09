@@ -94,6 +94,13 @@ Result Booking::processOrder(Order const& order) {
           book_[cur_epoch][stylist_id] = order.getClientId();
         }
         ret = true;
+      } else {  // check options
+        auto options = order.getOptions();
+        if (options & Order::Options::FlexibleTime) {
+          // Not implemented
+        } else if (options & Order::Options::FlexibleStylist) {
+          // Not implemented
+        }
       }
 
       break;

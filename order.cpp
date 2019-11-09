@@ -50,9 +50,8 @@ shared_ptr<vector<Order>> parseOrders(string filename) {
     auto type = od["order_type"].GetString();
     auto stylist_id = od["stylist_id"].GetUint();
     auto client_id = 0;
-    if (od.HasMember("client_id")) {
-      client_id = od["client_id"].GetUint();
-    }
+    uint options = Order::None;
+
     string slot_begin = od["slot_begin"].GetString();
     auto slot_len = od["slot_length_min"].GetUint();
     // parse ISO time format and convert to bucket
@@ -81,8 +80,17 @@ shared_ptr<vector<Order>> parseOrders(string filename) {
     }
     slot_len /= 30;  // unit in 30 mins
 
+    if (od.HasMember("client_id")) {
+      client_id = od["client_id"].GetUint();
+    }
+    if (od.HasMember("flexible_in_stylist")) {
+      options |= Order::FlexibleStylist;
+    }
+    if (od.HasMember("flexible_in_time")) {
+      options |= Order::FlexibleTime;
+    }
     Order new_order(id, type, stylist_id, client_id, epoch_in_thirty_mins,
-                    slot_len);
+                    slot_len, options);
     all_orders->emplace_back(new_order);
   }
   return all_orders;

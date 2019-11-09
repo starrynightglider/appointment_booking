@@ -2,12 +2,15 @@
 #include <cstdio>
 #include <iostream>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 #include "util.hpp"
+
 namespace app::order {
 using namespace std;
+
 class Order {
  public:
   enum Type {
@@ -17,14 +20,18 @@ class Order {
     CancelAppointment,
     UnknownType
   };
+  enum Options { None = 0x00, FlexibleTime = 0x01, FlexibleStylist = 0x02 };
+
   Order(string const &order_id, string const &order_type, uint stylist_id,
-        uint client_id, time_t const &epoch_in_thirty_mins, uint slot_len)
+        uint client_id, time_t const &epoch_in_thirty_mins, uint slot_len,
+        uint options)
       : order_id_(order_id),
         order_type_(ConvertType(order_type)),
         stylist_id_(stylist_id),
         client_id_(client_id),
         epoch_in_thirty_mins_(epoch_in_thirty_mins),
-        slot_len_(slot_len) {}
+        slot_len_(slot_len),
+        options_(options) {}
 
   friend ostream &operator<<(ostream &strm, Order const &order) {
     strm << "order id = " << order.order_id_
@@ -41,6 +48,7 @@ class Order {
   auto getClientId() const { return client_id_; }
   auto getEpochInThirtyMins() const { return epoch_in_thirty_mins_; }
   auto getSlotLen() const { return slot_len_; }
+  auto getOptions() const { return options_; }
 
  private:
   static Type ConvertType(string type);
@@ -50,7 +58,7 @@ class Order {
   uint client_id_ = 0;
   time_t epoch_in_thirty_mins_;
   uint slot_len_;
+  uint options_;
 };
-
 shared_ptr<vector<Order>> parseOrders(string filename);
 }  // namespace app::order
