@@ -40,7 +40,13 @@ For example:
 Each bucket is map from `stylist_id` --> `client_id`. If the slot is not booked yet, `client` will be `nullopt`.  
 
 # Other considerations
-1. In production design, we need an asynchronous listener to accept order request. For better performance, the booking process should also be multithreaded. In current implementation, a coarse locking scheme is used, this can be improved with a fine granular locking scheme, such as concurrent hash table for booking table.
+1. In production design, we need an asynchronous listener to accept order request and reply successness. For better performance, the booking process should also be multithreaded. In current implementation, a coarse locking scheme is used, this can be improved with a fine granular locking scheme, such as **concurrent hash table** for booking table.
 
-2. `order_id` seems to be an incremental number in the design. But the incremental method could suffer some difficulty in scaling the system. This could be resolved by using `client_id + timestamp` or `stylist_id +timestamp` as identifier. To To distinguish `client` and `stylist` id, we can specify all client id are even and stylist are odd numbers.   
+2. `order_id` seems to be an incremental number in the design. But the incremental method could suffer some difficulty in scaling the system. For example, if there are two or more server and the generation of global incremental number becomes tricky. This could be resolved by using `client_id + timestamp` or `stylist_id +timestamp` as order identifier. To distinguish `client` and `stylist` id, a simple way, we can specify all client id are even and stylist are odd numbers.   
+
+3. Some API such as `get_stylist_available_slots` or `get_available_stylist_in_slot` would be helpful to client to make booking.  
+
+4. The booking data is not persistent yet. Selection of DB will depending on the scale of the system and number of queries per second. 
+
+5. A rate limiter maybe need to prevent from DoS attack. 
 
