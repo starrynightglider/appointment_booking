@@ -1,17 +1,18 @@
 #include "booking.hpp"
+#include <sstream>
 
 namespace app::booking {
 
-shared_ptr<vector<Booking::Result>> Booking::processOrders(
+shared_ptr<vector<Result>> Booking::processOrders(
     shared_ptr<vector<Order>> orders) {
-  auto rets = make_shared<vector<Booking::Result>>();
+  auto rets = make_shared<vector<Result>>();
   for (auto const& order : *orders) {
     rets->push_back(processOrder(order));
   }
   return rets;
 }
 
-Booking::Result Booking::processOrder(Order const& order) {
+Result Booking::processOrder(Order const& order) {
   unique_lock<mutex> lock;
   // assuming different order has different order_id
   auto order_id = order.getOrderId();
@@ -43,7 +44,6 @@ Booking::Result Booking::processOrder(Order const& order) {
         }
         ret = true;
       }
-
       break;
     }
     case Order::RemoveSlot: {
@@ -133,6 +133,25 @@ Booking::Result Booking::processOrder(Order const& order) {
     }
   }
   return {order_id, ret};
+}
+
+string writeResult(shared_ptr<vector<Result>> results) {
+  ostringstream oss;
+  oss << "[\n";
+
+  for (auto i = 0; i < results->size(); ++i) {
+    auto const& r = (*results)[i];
+    oss << "\t{\n";
+    oss << "\t\t\"order_id\": \"" << r.first << "\",\n";
+    oss << "\t\t\"succeed\": " << r.second << "\n";
+    if (i == results->size() - 1) {
+      oss << "\t}\n";
+    } else {
+      oss << "\t},\n";
+    }
+  }
+  oss << "]\n";
+  return oss.str();
 }
 
 }  // namespace app::booking

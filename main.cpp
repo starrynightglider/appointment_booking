@@ -16,5 +16,6 @@ int main() {
   Booking book;
   auto res = book.processOrders(orders_in);
   std::cout << *res << std::endl;
+  cout << writeResult(res) << endl;
   return 0;
 }
