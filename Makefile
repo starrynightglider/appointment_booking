@@ -17,8 +17,8 @@ OBJFILES := \
 	$(OBJ)/order.o \
 	$(OBJ)/booking.o 
 
-main:  $(DEPENDENCIES) $(HEADERS) $(OBJFILES) $(OBJ)/main.o
-	@mkdir -p $(BUILD)
+main:  $(DEPENDENCIES) $(HEADERS) $(OBJFILES) $(OBJ)/main.o	
+	mkdir -p $(BUILD)
 	$(CXX) -o $(BUILD)/$@ $(OBJ)/main.o $(OBJFILES) $(CXXFLAGS) $(CPPFLAGS) $(LIBS) $(LDFLAGS)
 
 $(OBJ)/main.o: main.cpp $(HEADERS)
@@ -26,16 +26,18 @@ $(OBJ)/main.o: main.cpp $(HEADERS)
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(CPPFLAGS)
 
 $(OBJ)/order.o: order.cpp $(HEADERS)
+	@mkdir -p $(OBJ)
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(CPPFLAGS)
 
 $(OBJ)/booking.o: booking.cpp $(HEADERS)
+	@mkdir -p $(OBJ)
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(CPPFLAGS)
 
-test: tests/parse_json.cpp $(DEPENDENCIES) $(HEADERS)
+test: tests/test_booking.cpp $(DEPENDENCIES) $(HEADERS)
 	@mkdir -p $(TEST_BUILD)
 	$(CXX) $< -o $(TEST_BUILD)/$@.out $(OBJFILES) $(CXXFLAGS) $(CPPFLAGS) $(LIBS) $(LDFLAGS)
 
-run_test: test main
+run_test: main test
 	$(TEST_BUILD)/test.out
 
 clean: 

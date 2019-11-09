@@ -1,0 +1,55 @@
+[
+  {
+    "order_id": "1",
+    "order_type": "add_slot",
+    "stylist_id": 1234,
+    "slot_begin": "2019-09-01T23:00:00Z",
+    "slot_length_min": 180
+  },
+  {
+    "order_id": "2",
+    "order_type": "book_appointment",
+    "stylist_id": 1234,
+    "client_id": 100024,
+    "slot_begin": "2019-09-02T00:00:00Z",
+    "slot_length_min": 120
+  },
+  {
+    "order_id": "3",
+    "order_type": "add_slot",
+    "stylist_id": 1234,
+    "slot_begin": "2019-09-30T23:00:00Z",
+    "slot_length_min": 180
+  },
+  {
+    "order_id": "4",
+    "order_type": "book_appointment",
+    "stylist_id": 1234,
+    "client_id": 100024,
+    "slot_begin": "2019-10-01T00:00:00Z",
+    "slot_length_min": 120
+  },
+  {
+    "order_id": "5",
+    "order_type": "add_slot",
+    "stylist_id": 1234,
+    "slot_begin": "2019-12-31T23:00:00Z",
+    "slot_length_min": 180
+  },
+  {
+    "order_id": "6",
+    "order_type": "book_appointment",
+    "stylist_id": 1234,
+    "client_id": 100024,
+    "slot_begin": "2020-01-01T00:00:00Z",
+    "slot_length_min": 120
+  },
+  {
+    "order_id": "7",
+    "order_type": "book_appointment",
+    "stylist_id": 1234,
+    "client_id": 100025,
+    "slot_begin": "2020-01-01T00:00:00Z",
+    "slot_length_min": 30
+  }
+]

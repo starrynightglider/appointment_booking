@@ -3,9 +3,6 @@
 #include <sstream>
 #include "rapidjson/document.h"
 #include "rapidjson/istreamwrapper.h"
-#include "rapidjson/ostreamwrapper.h"
-#include "rapidjson/stringbuffer.h"
-#include "rapidjson/writer.h"
 
 namespace app::order {
 using namespace rapidjson;
@@ -27,7 +24,7 @@ shared_ptr<vector<Order>> parseOrders(string filename) {
   std::ifstream ifs{filename};
 
   if (!ifs.is_open()) {
-    std::cerr << "Cannot open file" << std::endl;
+    std::cerr << "Error! Cannot open file ..." << std::endl;
     return all_orders;
   }
   IStreamWrapper isw{ifs};
