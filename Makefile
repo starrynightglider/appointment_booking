@@ -35,10 +35,10 @@ $(OBJ)/booking.o: booking.cpp $(HEADERS)
 
 test: tests/test_booking.cpp $(DEPENDENCIES) $(HEADERS)
 	@mkdir -p $(TEST_BUILD)
-	$(CXX) $< -o $(TEST_BUILD)/$@.out $(OBJFILES) $(CXXFLAGS) $(CPPFLAGS) $(LIBS) $(LDFLAGS)
+	$(CXX) $< -o $(TEST_BUILD)/$@ $(OBJFILES) $(CXXFLAGS) $(CPPFLAGS) $(LIBS) $(LDFLAGS)
 
 run_test: main test
-	$(TEST_BUILD)/test.out
+	$(TEST_BUILD)/test
 
 clean: 
 	@rm -rf $(BUILD) $(OBJ) $(TEST_BUILD)

@@ -19,8 +19,8 @@ The following tools are required to build:
 **cmake**
 
 Library dependencies (will be downloaded and build as submodules automatically):
-1. rapidjson: parse json files
-2. gtest: testing framework
+1. rapidjson: header only library to parse json format
+2. gtest: Google testing framework
 
 # Build package
 Please follow the instructions:
@@ -28,9 +28,13 @@ Please follow the instructions:
 1. `git clone --recursive https://github.com/starrynightglider/appointment_booking.git`
 2. `make`
 
+a binary will be built in `./build/main`
+
 Run testing:
 
 `make run_test` 
+
+It will run several tests in `./test_build/test`
 
 # Order handling
 The orderes are placed in buckets for different times in epochs. The unit of epoch is in 30 mins.    
