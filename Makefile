@@ -18,7 +18,7 @@ OBJFILES := \
 	$(OBJ)/booking.o 
 
 main:  $(DEPENDENCIES) $(HEADERS) $(OBJFILES) $(OBJ)/main.o	
-	mkdir -p $(BUILD)
+	@mkdir -p $(BUILD)
 	$(CXX) -o $(BUILD)/$@ $(OBJ)/main.o $(OBJFILES) $(CXXFLAGS) $(CPPFLAGS) $(LIBS) $(LDFLAGS)
 
 $(OBJ)/main.o: main.cpp $(HEADERS)
